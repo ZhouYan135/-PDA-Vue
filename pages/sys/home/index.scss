@@ -1,0 +1,63 @@
+/*!
+ * Copyright (c) 2013-Now http://jeesite.com All rights reserved.
+ * @author ThinkGem
+ * @version 2020-9-1
+ */
+
+.toolbar {
+	padding-top: 5px;
+	background-color: #fff;
+}
+
+.grid {
+	
+	.grid-icon {
+		color: #666;
+	}
+	
+	.grid-text {
+		font-size: 32rpx;
+		padding: 15rpx;
+	}
+}
+.grid-img {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 20rpx;
+}
+
+.editor-box {
+  padding: 30rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.editor-img {
+  width: 300rpx;
+  height: 300rpx;
+  margin-bottom: 30rpx;
+}
+
+.editor-actions {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+}
+.editor-input-box {
+  display: flex;
+  align-items: center;
+  width: 80%;
+  margin-bottom: 30rpx;
+}
+
+.editor-label {
+  margin-right: 20rpx;
+  font-size: 28rpx;
+  color: #333;
+  white-space: nowrap;
+}
+
+.u-input {
+  flex: 1;
+}
