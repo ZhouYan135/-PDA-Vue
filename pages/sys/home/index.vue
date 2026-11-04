@@ -88,7 +88,7 @@
 							menuName: this.$t('home.stockTake'),
 							menuIcon: 'file-text ',
 							menuColor: '',
-							url: '/pages/sys/work/stockTake',
+							url: '/pages/sys/work/stockConfirm',
 						},
 						{
 							menuCode: 'a10',

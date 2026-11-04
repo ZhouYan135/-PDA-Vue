@@ -1,6 +1,15 @@
 <template>
 	<view class="page">
-		<view class="card">
+		<view class="barcode-row" v-if="!showDrug">
+			<text class="barcode-label">输入条码:</text>
+			<u-input ref="pkgId" class="barcode-input" v-model="barcode" placeholder="请扫描" type="text"
+				:focus="isFocus" clearable @confirm="onBarcodeConfirm" />
+		</view>
+		<view class="barcode-confirm" v-if="!showDrug">
+			<u-button class="btn" type="primary" :disabled="barcodeSubmitting" :loading="barcodeSubmitting"
+				@click="onBarcodeConfirm">确认</u-button>
+		</view>
+		<view class="card" v-if="showDrug">
 			<view class="card-title">药品信息</view>
 			<view class="card-body">
 				<view class="row">药品名称: {{ drugName }}</view>
@@ -12,7 +21,7 @@
 				</view>
 			</view>
 		</view>
-		<view class="form-footer">
+		<view class="form-footer" v-if="showDrug">
 			<u-button class="btn" type="primary" :disabled="submitting" :loading="submitting" @click="confirm">确认</u-button>
 		</view>
 	</view>
@@ -28,62 +37,84 @@
 				correctQty: '',
 				stockReady: false,
 				submitting: false,
-				correctFocus: false
+				barcode: '',
+				isFocus: true,
+				correctFocus: false,
+				barcodeSubmitting: false,
+				showDrug: false
 			};
 		},
 		onLoad(option) {
-			let drugName = '';
-			if (option && option.drugName) {
-				try {
-					drugName = decodeURIComponent(option.drugName);
-				} catch (e) {
-					drugName = '';
-				}
-			}
 			const fromUrl = option && option.UserName && option.UserName !== 'undefined'
 				? decodeURIComponent(option.UserName) : '';
-			this.drugName = drugName || this.vuex_drugName || '';
 			this.UserName = fromUrl || this.vuex_userName || '';
 			if (!this.UserName) {
 				this.$u.toast('缺少工号，请返回重试');
 				return;
 			}
-			if (!this.drugName) {
-				this.$u.toast('缺少药品，请返回重试');
-				return;
-			}
 			this.$u.vuex('vuex_userName', this.UserName);
-			this.$u.vuex('vuex_drugName', this.drugName);
-			this.loadStock();
 		},
-		onReady() {
-			this.$nextTick(() => {
-				this.correctFocus = true;
-			});
+		mounted() {
+			if (!this.showDrug) {
+				this.refocus();
+			}
 		},
+		// onShow() {
+		// 	if (!this.showDrug) {
+		// 		this.refocus();
+		// 	}
+		// },
 		methods: {
-			loadStock() {
-				if (!this.UserName || !this.drugName) {
+			refocus() {
+				this.isFocus = false;
+				this.$nextTick(() => {
+					this.isFocus = true;
+				});
+			},
+			focusCorrect() {
+				this.correctFocus = false;
+				this.$nextTick(() => {
+					this.correctFocus = true;
+				});
+			},
+			onBarcodeConfirm() {
+				if (this.barcodeSubmitting) {
 					return;
 				}
-				this.stockReady = false;
-				this.hisStock = '';
+				const barcode = String(this.barcode || '').replace(/[\r\n]/g, '').trim();
+				this.barcode = barcode;
+				if (!barcode) {
+					this.$u.toast('请输入条码');
+					this.refocus();
+					return;
+				}
 				const inputParas = {
 					OpterName: this.UserName,
-					drugName: this.drugName
+					barcode: barcode
 				};
-				this.$u.api.GetDrugStock(JSON.stringify(inputParas))
+				this.barcodeSubmitting = true;
+				this.$u.api.FindDragNameAndStockByPDABarcode(JSON.stringify(inputParas))
 					.then(res => {
-						if (res && res.code == 1 && res.hisStock !== undefined && res.hisStock !== null && res.hisStock !== '') {
-							this.hisStock = String(res.hisStock);
-							this.stockReady = true;
+						this.barcodeSubmitting = false;
+						this.$u.toast((res && res.message) || '未连接到服务器');
+						if (res && res.code == 1) {
+							this.drugName = res.drugName || '';
+							this.hisStock = res.hisStock !== undefined && res.hisStock !== null && res.hisStock !== ''
+								? String(res.hisStock) : '';
+							this.stockReady = !!(this.drugName && this.hisStock);
+							this.barcode = '';
+							this.showDrug = true;
+							this.$nextTick(() => {
+								this.focusCorrect();
+							});
 						} else {
-							this.stockReady = false;
-							this.$u.toast((res && res.message) || '查询库存失败');
+							this.refocus();
 						}
 					})
 					.catch(() => {
-						this.stockReady = false;
+						this.barcodeSubmitting = false;
+						this.$u.toast('未连接到服务器');
+						this.refocus();
 					});
 			},
 			onCorrectInput(e) {
@@ -176,6 +207,33 @@
 
 	.card-body {
 		padding: 36rpx 24rpx 28rpx;
+	}
+
+	.barcode-row {
+		display: flex;
+		align-items: center;
+		padding-left: 10px;
+		margin: 0 40rpx 28rpx;
+		box-shadow: 0rpx 5rpx 20rpx 5rpx rgba(45, 127, 235, 0.5);
+	}
+
+	.barcode-label {
+		flex-shrink: 0;
+		margin-right: 12rpx;
+		font-size: 30rpx;
+		color: #333333;
+	}
+
+	.barcode-input {
+		flex: 1;
+	}
+
+	.barcode-confirm {
+		margin: 0 40rpx 28rpx;
+	}
+
+	.barcode-confirm .btn {
+		margin: 0;
 	}
 
 	.row {

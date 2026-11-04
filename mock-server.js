@@ -18,10 +18,11 @@ const routes = {
 			{ name: 'B区' }
 		]
 	},
-	'/api/ptl/pdaskubarcode': {
+	'/api/ptl/finddragnameandstockbypdabarcode': {
 		code: 1,
-		message: '扫码成功',
-		Sku_photo: ''
+		message: '查询成功',
+		drugName: '阿莫西林胶囊',
+		hisStock: '100盒'
 	},
 	'/api/ptl/getlocatordrugs': {
 		code: 1,
@@ -36,11 +37,6 @@ const routes = {
 			{ name: '硝苯地平控释片' },
 			{ name: '硫酸氢氯吡格雷片' }
 		]
-	},
-	'/api/ptl/getdrugstock': {
-		code: 1,
-		message: '查询成功',
-		hisStock: '100盒'
 	},
 	'/api/ptl/correctstock': {
 		code: 1,
@@ -80,7 +76,7 @@ server.listen(PORT, '0.0.0.0', () => {
 	console.log('假接口已启动: http://127.0.0.1:' + PORT);
 	console.log('  POST /api/PTL/LogIn');
 	console.log('  POST /api/PTL/GetRegionNO');
-	console.log('  POST /api/PTL/PDASkuBarcode');
+	console.log('  POST /api/PTL/FindDragNameAndStockByPDABarcode');
 	console.log('  POST /api/PTL/GetLocatorDrugs');
 	console.log('  POST /api/PTL/GetDrugStock');
 	console.log('  POST /api/PTL/CorrectStock');

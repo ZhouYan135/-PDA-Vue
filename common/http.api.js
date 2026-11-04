@@ -22,7 +22,7 @@ const install = (Vue, vm) => {
 		//登录测试
 		LogIn: (params = {}) => vm.$u.postJson(config.adminPath+'/LogIn', params),
 		LoginAccount: (params = {}) => vm.$u.postJson(config.adminPaths+'/LoginAccount', params),
-		PDASkuBarcode: (params = {}) => vm.$u.postJson(config.adminPaths+'/PDASkuBarcode', params),
+		FindDragNameAndStockByPDABarcode: (params = {}) => vm.$u.postJson(config.adminPaths+'/FindDragNameAndStockByPDABarcode', params),
 		GetLocatorDrugs: (params = {}) => vm.$u.postJson(config.adminPaths+'/GetLocatorDrugs', params),
 		GetDrugStock: (params = {}) => vm.$u.postJson(config.adminPaths+'/GetDrugStock', params),
 		CorrectStock: (params = {}) => vm.$u.postJson(config.adminPaths+'/CorrectStock', params),
